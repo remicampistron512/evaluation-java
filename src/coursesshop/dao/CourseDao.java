@@ -37,8 +37,7 @@ public class CourseDao {
 
 
                 // Build the domain object from the current row
-                // Adjust this line if your Course constructor is different
-                courses.add(new Course(id, name, description, durationDays, price, mode));
+               courses.add(new Course(id, name, description, durationDays, price, mode));
             }
 
             // Return the full list

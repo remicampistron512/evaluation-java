@@ -17,4 +17,9 @@ public class CourseBuyingService {
         CategoryDao categoryDao = new CategoryDao();
         return categoryDao.findAll();
     }
+
+    public List<Course> listCoursesByCategory(int categoryId) {
+        CourseDao courseDao = new CourseDao();
+        return courseDao.findByCategory(categoryId);
+    }
 }

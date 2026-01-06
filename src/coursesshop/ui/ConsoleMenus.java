@@ -1,6 +1,7 @@
 package coursesshop.ui;
 
 import coursesshop.business.CourseBuyingService;
+import coursesshop.model.Category;
 import coursesshop.model.Course;
 
 import java.util.List;
@@ -23,16 +24,58 @@ public class ConsoleMenus {
         while (true) {
             System.out.println("\n=== MAIN MENU ===");
             System.out.println("1) Display courses");
-            System.out.println("2) Log in/Sign in");
+            System.out.println("2) Display courses by category");
+            System.out.println("3) Display courses by keyword");
+            System.out.println("4) Display courses by attendance");
+            System.out.println("5) Log in/Sign in");
             System.out.println("0) Exit");
 
-            int choice = readInt(CHOICE_TEXT, 0, 2);
+            int choice = readInt(CHOICE_TEXT, 0, 5);
             switch (choice) {
                 case 1 -> listCourses();
-                case 2 -> { return; }
+                case 2 -> chooseCategory();
+                case 3 -> { return; }
+                case 4 -> { return; }
+                case 5 -> { return; }
                 case 0 -> { return; } // exit application
             }
         }
+    }
+    private void chooseCategory(){
+        listCourseCategory();
+        List<Category> categoriesList = service.listCategories();
+        System.out.println("\n--- Display courses from which Category ? ---");
+        int choice = readInt(CHOICE_TEXT, 0, categoriesList.size());
+
+    }
+    private void listCourseCategory() {
+        List<Category> categoryList = service.listCategories();
+
+        if (categoryList == null || categoryList.isEmpty()) {
+            System.out.println("No categories  found.");
+            return;
+        }
+        System.out.println("============================== Choose a category ==============================");
+
+        System.out.printf(
+                "%-10s %-35s%n",
+                "Id", "Name"
+        );
+
+        System.out.println("---------------------------------------------------------------------");
+
+        for (Category category : categoryList) {
+
+
+            System.out.printf(
+                    "%-10d  %-35s%n",
+
+                    category.getId(),
+                    category.getName()
+
+            );
+        }
+
     }
 
     private int readInt(String prompt, int min, int max) {

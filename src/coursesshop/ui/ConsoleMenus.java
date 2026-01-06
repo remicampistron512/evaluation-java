@@ -46,8 +46,45 @@ public class ConsoleMenus {
         List<Category> categoriesList = service.listCategories();
         System.out.println("\n--- Display courses from which Category ? ---");
         int choice = readInt(CHOICE_TEXT, 0, categoriesList.size());
+        listCoursesByCategory(choice);
+    }
+
+
+    private void listCoursesByCategory(int categoryId){
+        List<Course> coursesList = service.listCoursesByCategory(categoryId);
+
+
+        if (coursesList == null || coursesList.isEmpty()) {
+            System.out.println("No accounts found.");
+            return;
+        }
+
+        System.out.println("============================== Available courses ==============================");
+
+        System.out.printf(
+                "%-10s %-35s %-90s %-12s %10s %-12s%n",
+                "Id", "Name", "Description", "Duration", "Price", "Mode"
+        );
+
+        System.out.println("---------------------------------------------------------------------");
+
+        for (Course course : coursesList) {
+            String duration = course.getDurationDays() + " days";
+
+            System.out.printf(
+                    "%-10d  %-35s %-90s %-12s %10.2f %-12s%n",
+
+                    course.getId(),
+                    course.getName(),
+                    course.getDescription(),
+                    duration,
+                    course.getPrice(),
+                    course.getMode()
+            );
+        }
 
     }
+
     private void listCourseCategory() {
         List<Category> categoryList = service.listCategories();
 
@@ -99,7 +136,7 @@ public class ConsoleMenus {
         List<Course> coursesList = service.listCourses();
 
         if (coursesList == null || coursesList.isEmpty()) {
-            System.out.println("No accounts found.");
+            System.out.println("No courses found.");
             return;
         }
 

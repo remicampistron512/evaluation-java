@@ -14,8 +14,8 @@ import java.util.List;
 public class CourseDao {
     public List<Course> findAll() {
         String sql = """
-        SELECT c.id, c.name, c.description,c.duration_days,c.price,c.attendance_mode_code,c.created_at
-        FROM courses c ORDER BY c.name
+        SELECT c.id, c.name, c.description,c.duration_days,c.price,c.created_at,c.attendance_mode_code
+        FROM course c ORDER BY c.name
         """;
 
         List<Course> courses = new ArrayList<>();

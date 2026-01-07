@@ -81,13 +81,10 @@ public class ConsoleMenus {
         System.out.println("\n--- Enter the attendance id ? ---");
         int attendanceModeId = readInt(CHOICE_TEXT, 0, attendanceModes.size());
         AttendanceMode attendanceMode = attendanceModes.get(attendanceModeId - 1); // index -> enum
-        listCoursesByAttendance(attendanceMode);
-    }
-
-    private void listCoursesByAttendance(AttendanceMode attendanceMode) {
         printCourses("Courses \"" + attendanceMode + "\"", service.listCoursesByAttendance(attendanceMode));
-
     }
+
+    
 
 
     private List<AttendanceMode>  listAttendanceModes() {

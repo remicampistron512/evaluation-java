@@ -85,12 +85,6 @@ public class ConsoleMenus {
     }
 
     private void listCoursesByAttendance(AttendanceMode attendanceMode) {
-        List<Course> coursesList = service.listCoursesByAttendance(attendanceMode);
-
-        if (coursesList == null || coursesList.isEmpty()) {
-            System.out.println("No courses found.");
-            return;
-        }
         printCourses("Courses \"" + attendanceMode + "\"", service.listCoursesByAttendance(attendanceMode));
 
     }

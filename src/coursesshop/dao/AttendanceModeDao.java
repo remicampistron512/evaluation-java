@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * Data Access Object (DAO) responsible for retrieving {@link AttendanceMode} values
  * from the {@code attendance_mode} reference table.
- * <p>
- * In the database, {@code attendance_mode.code} is expected to match the Java enum names
+ *
+ * <p>In the database, {@code attendance_mode.code} is expected to match the Java enum names
  * (e.g., {@code ONSITE}, {@code REMOTE}). This DAO reads the codes and converts them to
  * {@link AttendanceMode}.
  * </p>
@@ -21,8 +21,8 @@ public class AttendanceModeDao {
 
   /**
    * Returns all available attendance modes from the database as enum values.
-   * <p>
-   * The result is ordered by the {@code code} column (alphabetical order).
+   *
+   * <p>The result is ordered by the {@code code} column (alphabetical order).
    * </p>
    *
    * @return a list of attendance modes (possibly empty, never {@code null})

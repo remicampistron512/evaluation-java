@@ -21,6 +21,12 @@ public class ConsoleMenus {
         System.out.println("Goodbye.");
     }
 
+    private void printHeader(String title) {
+        System.out.println("============================================================");
+        System.out.println(title);
+        System.out.println("============================================================");
+    }
+
     private void mainMenu() {
         while (true) {
             System.out.println("\n=== MAIN MENU ===");
@@ -65,7 +71,8 @@ public class ConsoleMenus {
             return;
         }
 
-        System.out.println("==============================  courses  \" " + attendanceMode + " \" ==============================");
+        printHeader("Courses \"" + attendanceMode + "\"");
+
 
         System.out.printf(
                 "%-10s %-35s %-90s %-12s %10s %-12s%n",
@@ -93,7 +100,8 @@ public class ConsoleMenus {
 
 
     private List<AttendanceMode>  listAttendanceModes() {
-        System.out.println("============================== Attendance modes ==============================");
+        printHeader("Attendance modes");
+
         System.out.printf(
                 "%-10s %-35s%n",
                 "Id", "Name"
@@ -122,7 +130,7 @@ public class ConsoleMenus {
             return;
         }
 
-        System.out.println("==============================  courses with \" " + keyword + " \" ==============================");
+        printHeader("Courses with \"" + keyword + "\"");
 
         System.out.printf(
                 "%-10s %-35s %-90s %-12s %10s %-12s%n",
@@ -166,7 +174,7 @@ public class ConsoleMenus {
             return;
         }
 
-        System.out.println("============================== Available courses ==============================");
+        printHeader("Available courses");
 
         System.out.printf(
                 "%-10s %-35s %-90s %-12s %10s %-12s%n",
@@ -199,7 +207,7 @@ public class ConsoleMenus {
             System.out.println("No categories  found.");
             return;
         }
-        System.out.println("============================== Choose a category ==============================");
+        printHeader("Choose a category");
 
         System.out.printf(
                 "%-10s %-35s%n",
@@ -247,7 +255,7 @@ public class ConsoleMenus {
             return;
         }
 
-        System.out.println("============================== Available courses ==============================");
+        printHeader("Available courses");
 
         System.out.printf(
                 "%-10s %-35s %-90s %-12s %10s %-12s%n",

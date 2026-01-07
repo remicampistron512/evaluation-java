@@ -3,6 +3,7 @@ package coursesshop.ui;
 import coursesshop.business.CourseBuyingService;
 import coursesshop.model.Category;
 import coursesshop.model.Course;
+import coursesshop.model.enums.AttendanceMode;
 
 import java.util.List;
 import java.util.Scanner;
@@ -48,7 +49,70 @@ public class ConsoleMenus {
         listCoursesByKeyword(keyword);
     }
 
+    private void chooseAttendance() {
+        List<AttendanceMode> attendanceModes = listAttendanceModes();
+        System.out.println("\n--- Enter the attendance id ? ---");
+        int attendanceModeId = readInt(CHOICE_TEXT, 0, attendanceModes.size());
+        AttendanceMode attendanceMode = attendanceModes.get(attendanceModeId - 1); // index -> enum
+        listCoursesByAttendance(attendanceMode);
+    }
 
+    private void listCoursesByAttendance(AttendanceMode attendanceMode) {
+        List<Course> coursesList = service.listCoursesByAttendance(attendanceMode);
+
+        if (coursesList == null || coursesList.isEmpty()) {
+            System.out.println("No courses found.");
+            return;
+        }
+
+        System.out.println("==============================  courses  \" " + attendanceMode + " \" ==============================");
+
+        System.out.printf(
+                "%-10s %-35s %-90s %-12s %10s %-12s%n",
+                "Id", "Name", "Description", "Duration", "Price", "Mode"
+        );
+
+        System.out.println("---------------------------------------------------------------------");
+
+        for (Course course : coursesList) {
+            String duration = course.getDurationDays() + " days";
+
+            System.out.printf(
+                    "%-10d  %-35s %-90s %-12s %10.2f %-12s%n",
+
+                    course.getId(),
+                    course.getName(),
+                    course.getDescription(),
+                    duration,
+                    course.getPrice(),
+                    course.getMode()
+            );
+        }
+
+    }
+
+
+    private List<AttendanceMode>  listAttendanceModes() {
+        System.out.println("============================== Attendance modes ==============================");
+        System.out.printf(
+                "%-10s %-35s%n",
+                "Id", "Name"
+        );
+        List<AttendanceMode> attendanceModes = service.listAttendanceModes();
+
+        int i = 0;
+        for (AttendanceMode attendanceMode : attendanceModes){
+            i++;
+            System.out.printf(
+                    "%-10d  %-35s%n",
+
+                    i,
+                    attendanceMode
+
+            );
+        }
+        return attendanceModes;
+    }
 
     private void listCoursesByKeyword(String keyword) {
         List<Course> coursesList = service.listCoursesByKeyword(keyword);

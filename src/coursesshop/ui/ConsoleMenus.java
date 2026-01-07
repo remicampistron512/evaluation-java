@@ -56,7 +56,6 @@ public class ConsoleMenus {
             System.out.println("2) Display courses by category");
             System.out.println("3) Display courses by keyword");
             System.out.println("4) Display courses by attendance");
-            System.out.println("5) Log in/Sign in");
             System.out.println("0) Exit");
 
             int choice = readInt(CHOICE_TEXT, 0, 5);
@@ -65,7 +64,6 @@ public class ConsoleMenus {
                 case 2 -> chooseCategory();
                 case 3 -> chooseKeyword();
                 case 4 -> chooseAttendance();
-                case 5 -> { return; }
                 case 0 -> { return; } // exit application
                 default -> { return; }
             }

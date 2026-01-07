@@ -149,4 +149,38 @@ public class CourseDao {
 
 
     }
+
+    public List<Course> findByAttendance(AttendanceMode mode) {
+        String sql = """
+        SELECT id, name, description, duration_days, price, created_at, attendance_mode_code
+        FROM course
+        WHERE attendance_mode_code = ?
+        ORDER BY name
+        """;
+
+        List<Course> courses = new ArrayList<>();
+
+        try (Connection cn = ConnectionFactory.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, mode.name()); // "ONSITE" / "REMOTE"
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    int durationDays = rs.getInt("duration_days");
+                    BigDecimal price = rs.getBigDecimal("price");
+                    String code = rs.getString("attendance_mode_code");
+                    AttendanceMode attendanceMode = AttendanceMode.valueOf(code);
+                    courses.add(new Course(id, name, description, durationDays, price, attendanceMode));
+                }
+            }
+            return courses;
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to list courses by attendance mode.", e);
+        }
+    }
 }

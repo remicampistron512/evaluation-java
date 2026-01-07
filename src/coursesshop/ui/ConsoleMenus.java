@@ -21,10 +21,7 @@ import java.util.Scanner;
  */
 public class ConsoleMenus {
 
-  /**
-   * Default prompt text for integer choices.
-   */
-  private static final String CHOICE_TEXT = "Choose: ";
+
   /**
    * Shared scanner used to read user input from standard input.
    */
@@ -112,7 +109,7 @@ public class ConsoleMenus {
       System.out.println("4) Display courses by attendance");
       System.out.println("0) Exit");
 
-      int choice = readInt(CHOICE_TEXT, 0, 4);
+      int choice = readInt("Choose a menu item: " , 0, 4);
 
       switch (choice) {
         case 1 -> listCourses();
@@ -151,7 +148,7 @@ public class ConsoleMenus {
     System.out.println("\n--- Enter the attendance id ? ---");
 
     // Read a 1-based index and convert it to 0-based list index.
-    int attendanceModeId = readInt("Choose attendance id", 1, attendanceModes.size());
+    int attendanceModeId = readInt("Choose attendance id: ", 1, attendanceModes.size());
     AttendanceMode attendanceMode = attendanceModes.get(attendanceModeId - 1);
 
     // Retrieve and print matching courses.
@@ -195,7 +192,7 @@ public class ConsoleMenus {
     System.out.println("\n--- Display courses from which Category ? ---");
 
 
-    int choice = readInt(CHOICE_TEXT, 0, categoriesList.size());
+    int choice = readInt("Choose a category id: ", 0, categoriesList.size());
 
     printCourses("Courses", service.listCoursesByCategory(choice));
   }

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CourseDao {
 
@@ -26,30 +27,35 @@ public class CourseDao {
         return new Course(id, name, description, durationDays, price, mode);
     }
 
+    private List<Course> queryCourses(String sql, Consumer<PreparedStatement> binder) {
+        List<Course> courses = new ArrayList<>();
+
+        try (Connection cn = ConnectionFactory.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            if (binder != null) {
+                binder.accept(ps); // set parameters
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    courses.add(mapCourse(rs));
+                }
+            }
+            return courses;
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to query courses.", e);
+        }
+    }
+
     public List<Course> findAll() {
         String sql = """
         SELECT c.id, c.name, c.description,c.duration_days,c.price,c.created_at,c.attendance_mode_code
         FROM course c ORDER BY c.name
         """;
 
-        List<Course> courses = new ArrayList<>();
-        // Open connection, prepare statement, execute query; all resources auto-close
-        try (Connection cn = ConnectionFactory.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            // Iterate through result rows and map each row to a course object
-            while (rs.next()) {
-                courses.add(mapCourse(rs));
-            }
-
-            // Return the full list
-            return courses;
-
-        } catch (SQLException e) {
-            // Wrap SQL error into a DAO exception
-            throw new DaoException("Failed to list courses.", e);
-        }
+        return queryCourses(sql, null);
     }
 
     public List<Course> findByCategory(int categoryId) {
@@ -69,28 +75,10 @@ public class CourseDao {
                     ORDER BY c.name;
                     """;
 
-        List<Course> courses = new ArrayList<>();
-        // Open connection, prepare statement, execute query; all resources auto-close
-        try (Connection cn = ConnectionFactory.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
-
-            ps.setInt(1, categoryId);
-
-            // Iterate through result rows and map each row to a course object
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-
-                    courses.add(mapCourse(rs));
-                }
-            }
-            // Return the full list
-            return courses;
-
-        } catch (SQLException e) {
-            // Wrap SQL error into a DAO exception
-            throw new DaoException("Failed to list courses.", e);
-        }
-
+        return queryCourses(sql, ps -> {
+            try { ps.setInt(1, categoryId); }
+            catch (SQLException e) { throw new DaoException("Failed to bind parameters.", e); }
+        });
 
     }
 
@@ -110,29 +98,15 @@ public class CourseDao {
                     ORDER BY c.name;
                     """;
 
-        List<Course> courses = new ArrayList<>();
-        // Open connection, prepare statement, execute query; all resources auto-close
-        try (Connection cn = ConnectionFactory.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
-
-            String pattern = "%" + keyword + "%";
-            ps.setString(1, pattern);
-            ps.setString(2, pattern);
-
-            // Iterate through result rows and map each row to a course object
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-
-                    courses.add(mapCourse(rs));
-                }
+        String pattern = "%" + keyword + "%";
+        return queryCourses(sql, ps -> {
+            try {
+                ps.setString(1, pattern);
+                ps.setString(2, pattern);
+            } catch (SQLException e) {
+                throw new DaoException("Failed to bind parameters.", e);
             }
-            // Return the full list
-            return courses;
-
-        } catch (SQLException e) {
-            // Wrap SQL error into a DAO exception
-            throw new DaoException("Failed to list courses.", e);
-        }
+        });
 
 
     }
@@ -145,22 +119,9 @@ public class CourseDao {
         ORDER BY name
         """;
 
-        List<Course> courses = new ArrayList<>();
-
-        try (Connection cn = ConnectionFactory.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
-
-            ps.setString(1, mode.name()); // "ONSITE" / "REMOTE"
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    courses.add(mapCourse(rs));
-                }
-            }
-            return courses;
-
-        } catch (SQLException e) {
-            throw new DaoException("Failed to list courses by attendance mode.", e);
-        }
+        return queryCourses(sql, ps -> {
+            try { ps.setString(1, mode.name()); }
+            catch (SQLException e) { throw new DaoException("Failed to bind parameters.", e); }
+        });
     }
 }

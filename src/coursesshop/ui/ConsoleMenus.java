@@ -73,7 +73,7 @@ public class ConsoleMenus {
     private void chooseKeyword() {
         System.out.println("\n--- Enter a keyword ? ---");
         String keyword = in.nextLine();
-        listCoursesByKeyword(keyword);
+        printCourses("Courses \"" + keyword + "\"", service.listCoursesByKeyword(keyword));
     }
 
     private void chooseAttendance() {
@@ -113,9 +113,7 @@ public class ConsoleMenus {
         return attendanceModes;
     }
 
-    private void listCoursesByKeyword(String keyword) {
-        printCourses("Courses \"" + keyword + "\"", service.listCoursesByKeyword(keyword));
-    }
+
 
     private void chooseCategory(){
         listCourseCategory();

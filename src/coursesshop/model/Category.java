@@ -1,8 +1,8 @@
 package coursesshop.model;
 
 public class Category {
-    protected int id;
-    protected String name;
+    private int id;
+    private String name;
 
     public Category(int id,String name){
         this.id = id;

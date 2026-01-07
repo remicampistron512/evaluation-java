@@ -122,16 +122,9 @@ public class ConsoleMenus {
         List<Category> categoriesList = service.listCategories();
         System.out.println("\n--- Display courses from which Category ? ---");
         int choice = readInt(CHOICE_TEXT, 0, categoriesList.size());
-        listCoursesByCategory(choice);
+        printCourses("Courses", service.listCoursesByCategory(choice));
     }
 
-
-    private void listCoursesByCategory(int categoryId){
-
-        printCourses("Courses", service.listCoursesByCategory(categoryId));
-
-
-    }
 
     private void listCourseCategory() {
         List<Category> categoryList = service.listCategories();

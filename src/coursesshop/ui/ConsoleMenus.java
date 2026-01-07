@@ -84,7 +84,7 @@ public class ConsoleMenus {
         printCourses("Courses \"" + attendanceMode + "\"", service.listCoursesByAttendance(attendanceMode));
     }
 
-    
+
 
 
     private List<AttendanceMode>  listAttendanceModes() {
@@ -162,7 +162,7 @@ public class ConsoleMenus {
                     continue;
                 }
                 return v;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException _) {
                 System.out.println("Invalid number.");
             }
         }

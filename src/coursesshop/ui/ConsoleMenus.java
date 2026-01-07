@@ -34,13 +34,56 @@ public class ConsoleMenus {
             switch (choice) {
                 case 1 -> listCourses();
                 case 2 -> chooseCategory();
-                case 3 -> { return; }
-                case 4 -> { return; }
+                case 3 -> chooseKeyword();
+                case 4 -> chooseAttendance();
                 case 5 -> { return; }
                 case 0 -> { return; } // exit application
             }
         }
     }
+
+    private void chooseKeyword() {
+        System.out.println("\n--- Enter a keyword ? ---");
+        String keyword = in.nextLine();
+        listCoursesByKeyword(keyword);
+    }
+
+
+
+    private void listCoursesByKeyword(String keyword) {
+        List<Course> coursesList = service.listCoursesByKeyword(keyword);
+
+        if (coursesList == null || coursesList.isEmpty()) {
+            System.out.println("No courses found.");
+            return;
+        }
+
+        System.out.println("==============================  courses with \" " + keyword + " \" ==============================");
+
+        System.out.printf(
+                "%-10s %-35s %-90s %-12s %10s %-12s%n",
+                "Id", "Name", "Description", "Duration", "Price", "Mode"
+        );
+
+        System.out.println("---------------------------------------------------------------------");
+
+        for (Course course : coursesList) {
+            String duration = course.getDurationDays() + " days";
+
+            System.out.printf(
+                    "%-10d  %-35s %-90s %-12s %10.2f %-12s%n",
+
+                    course.getId(),
+                    course.getName(),
+                    course.getDescription(),
+                    duration,
+                    course.getPrice(),
+                    course.getMode()
+            );
+        }
+
+    }
+
     private void chooseCategory(){
         listCourseCategory();
         List<Category> categoriesList = service.listCategories();
@@ -55,7 +98,7 @@ public class ConsoleMenus {
 
 
         if (coursesList == null || coursesList.isEmpty()) {
-            System.out.println("No accounts found.");
+            System.out.println("No courses found.");
             return;
         }
 

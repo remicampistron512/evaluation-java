@@ -106,7 +106,6 @@ public class CourseDao {
                c.description,
                c.duration_days,
                c.price,
-               c.created_at,
                c.attendance_mode_code
         FROM course c
         ORDER BY c.name
@@ -129,7 +128,6 @@ public class CourseDao {
                c.description,
                c.duration_days,
                c.price,
-               c.created_at,
                c.attendance_mode_code
         FROM course c
         JOIN course_category cc ON cc.course_id = c.id
@@ -165,7 +163,6 @@ public class CourseDao {
                c.description,
                c.duration_days,
                c.price,
-               c.created_at,
                c.attendance_mode_code
         FROM course c
         WHERE c.name LIKE ?
@@ -201,7 +198,6 @@ public class CourseDao {
                description,
                duration_days,
                price,
-               created_at,
                attendance_mode_code
         FROM course
         WHERE attendance_mode_code = ?

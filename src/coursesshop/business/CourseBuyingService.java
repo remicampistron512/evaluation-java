@@ -22,4 +22,9 @@ public class CourseBuyingService {
         CourseDao courseDao = new CourseDao();
         return courseDao.findByCategory(categoryId);
     }
+
+    public List<Course> listCoursesByKeyword(String keyword) {
+        CourseDao courseDao = new CourseDao();
+        return courseDao.findByKeyword(keyword);
+    }
 }

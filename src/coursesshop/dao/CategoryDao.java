@@ -47,7 +47,7 @@ public class CategoryDao {
         categories.add(new Category(id, name));
       }
 
-      // Return the full list (may be empty if the table is empty).
+      // Return the full list (maybe empty if the table is empty).
       return categories;
 
     } catch (SQLException e) {

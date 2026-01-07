@@ -12,6 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDao {
+
+    private Course mapCourse(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        String description = rs.getString("description");
+        int durationDays = rs.getInt("duration_days");
+        BigDecimal price = rs.getBigDecimal("price");
+
+        String code = rs.getString("attendance_mode_code");
+        AttendanceMode mode = AttendanceMode.valueOf(code);
+
+        return new Course(id, name, description, durationDays, price, mode);
+    }
+
     public List<Course> findAll() {
         String sql = """
         SELECT c.id, c.name, c.description,c.duration_days,c.price,c.created_at,c.attendance_mode_code
@@ -26,18 +40,7 @@ public class CourseDao {
 
             // Iterate through result rows and map each row to a course object
             while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String description = rs.getString("description");
-                int durationDays = rs.getInt("duration_days");
-                BigDecimal price = rs.getBigDecimal("price");
-                String code = rs.getString("attendance_mode_code");
-                AttendanceMode mode = AttendanceMode.valueOf(code);
-
-
-
-                // Build the domain object from the current row
-               courses.add(new Course(id, name, description, durationDays, price, mode));
+                courses.add(mapCourse(rs));
             }
 
             // Return the full list
@@ -77,15 +80,7 @@ public class CourseDao {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
 
-                    int id = rs.getInt("id");
-                    String name = rs.getString("name");
-                    String description = rs.getString("description");
-                    int durationDays = rs.getInt("duration_days");
-                    BigDecimal price = rs.getBigDecimal("price");
-                    String code = rs.getString("attendance_mode_code");
-                    AttendanceMode mode = AttendanceMode.valueOf(code);
-
-                    courses.add(new Course(id, name, description, durationDays, price, mode));
+                    courses.add(mapCourse(rs));
                 }
             }
             // Return the full list
@@ -128,15 +123,7 @@ public class CourseDao {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
 
-                    int id = rs.getInt("id");
-                    String name = rs.getString("name");
-                    String description = rs.getString("description");
-                    int durationDays = rs.getInt("duration_days");
-                    BigDecimal price = rs.getBigDecimal("price");
-                    String code = rs.getString("attendance_mode_code");
-                    AttendanceMode mode = AttendanceMode.valueOf(code);
-
-                    courses.add(new Course(id, name, description, durationDays, price, mode));
+                    courses.add(mapCourse(rs));
                 }
             }
             // Return the full list
@@ -167,14 +154,7 @@ public class CourseDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("id");
-                    String name = rs.getString("name");
-                    String description = rs.getString("description");
-                    int durationDays = rs.getInt("duration_days");
-                    BigDecimal price = rs.getBigDecimal("price");
-                    String code = rs.getString("attendance_mode_code");
-                    AttendanceMode attendanceMode = AttendanceMode.valueOf(code);
-                    courses.add(new Course(id, name, description, durationDays, price, attendanceMode));
+                    courses.add(mapCourse(rs));
                 }
             }
             return courses;

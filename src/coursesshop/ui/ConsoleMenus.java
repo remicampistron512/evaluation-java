@@ -67,6 +67,7 @@ public class ConsoleMenus {
                 case 4 -> chooseAttendance();
                 case 5 -> { return; }
                 case 0 -> { return; } // exit application
+                default -> { return; }
             }
         }
     }

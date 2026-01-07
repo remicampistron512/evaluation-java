@@ -8,33 +8,51 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) for {@link Category} entities.
+ *
+ * <p>This DAO provides read operations for the {@code category} reference table.
+ * </p>
+ */
 public class CategoryDao {
-    public List<Category> findAll() {
-        String sql = """
-        SELECT c.id, c.name
-        FROM category c ORDER BY c.id
-        """;
 
-        List<Category> categories = new ArrayList<>();
-        // Open connection, prepare statement, execute query; all resources auto-close
-        try (Connection cn = ConnectionFactory.getConnection();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+  /**
+   * Retrieves all categories from the database, ordered by category id.
+   *
+   * @return a list of {@link Category} objects (possibly empty, never {@code null})
+   * @throws DaoException if a database access error occurs
+   */
+  public List<Category> findAll() {
+    // Query all categories; keep output stable by ordering by primary key.
+    String sql = """
+            SELECT c.id, c.name
+            FROM category c
+            ORDER BY c.id
+            """;
 
-            // Iterate through result rows and map each row to a category object
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                // Build the domain object from the current row
-                categories.add(new Category(id, name));
-            }
+    // Container for the resulting categories.
+    List<Category> categories = new ArrayList<>();
 
-            // Return the full list
-            return categories;
+    // try-with-resources ensures JDBC resources are always closed properly.
+    try (Connection cn = ConnectionFactory.getConnection();
+        PreparedStatement ps = cn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()) {
 
-        } catch (SQLException e) {
-            // Wrap SQL error into a DAO exception
-            throw new DaoException("Failed to list categories.", e);
-        }
+      // Iterate through rows and map each row to a Category domain object.
+      while (rs.next()) {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+
+        // Build the domain object from the current row.
+        categories.add(new Category(id, name));
+      }
+
+      // Return the full list (may be empty if the table is empty).
+      return categories;
+
+    } catch (SQLException e) {
+      // Wrap JDBC exceptions into a DAO-layer exception for consistent error handling.
+      throw new DaoException("Failed to list categories.", e);
     }
+  }
 }

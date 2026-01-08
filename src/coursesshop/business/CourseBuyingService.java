@@ -98,4 +98,15 @@ public class CourseBuyingService {
     UserDao userdao = new UserDao();
     return userdao.register(firstName, lastName, login, password);
   }
+
+  /**
+   * Login a User
+   * @param login the user login
+   * @param password the user password
+   * @return a {@link User} object
+   */
+  public User login(String login, String password){
+    UserDao userdao = new UserDao();
+    return userdao.login(login, password);
+  }
 }

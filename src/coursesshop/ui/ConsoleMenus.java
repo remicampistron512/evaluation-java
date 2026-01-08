@@ -33,6 +33,11 @@ public class ConsoleMenus {
   private final CourseBuyingService service;
 
   /**
+   * Session state
+   */
+  private User currentUser = null;
+
+  /**
    * Builds a new console menu controller.
    *
    * @param service the business service used by the UI (must not be {@code null})
@@ -50,6 +55,21 @@ public class ConsoleMenus {
   public void run() {
     mainMenu(); // blocks until user exits
     System.out.println("Goodbye.");
+  }
+
+  /**
+   * track if a user is connected
+   * @return the state of currentUser
+   */
+  private boolean isLoggedIn() {
+    return currentUser != null;
+  }
+
+  /**
+   * log out a user
+   */
+  private void logout() {
+    currentUser = null;
   }
 
   /**
@@ -103,16 +123,26 @@ public class ConsoleMenus {
    */
   private void mainMenu() {
     while (true) {
-      System.out.println("\n=== MAIN MENU ===");
-      System.out.println("1) Display courses");
-      System.out.println("2) Display courses by category");
-      System.out.println("3) Display courses by keyword");
-      System.out.println("4) Display courses by attendance");
-      System.out.println("5) Sign in");
-      System.out.println("6) Register");
-      System.out.println("0) Exit");
+      if(isLoggedIn()) {
+        System.out.printf("%n=== WELCOME %s %s ===%n",currentUser.getFirstName(),currentUser.getLastName());
+        System.out.println("1) Display and buy courses");
+        System.out.println("2) Display and buy courses by category");
+        System.out.println("3) Display and buy courses by keyword");
+        System.out.println("4) Display and buy courses by attendance");
+        System.out.println("7) Sign Out");
+        System.out.println("0) Exit");
+      } else {
+        System.out.println("\n=== MAIN MENU ===");
+        System.out.println("1) Display courses");
+        System.out.println("2) Display courses by category");
+        System.out.println("3) Display courses by keyword");
+        System.out.println("4) Display courses by attendance");
+        System.out.println("5) Sign in");
+        System.out.println("6) Register");
+        System.out.println("0) Exit");
+      }
 
-      int choice = readInt("Choose a menu item: " , 0, 6);
+      int choice = readInt("Choose a menu item: " , 0, 7);
 
       switch (choice) {
         case 1 -> listCourses();
@@ -121,6 +151,7 @@ public class ConsoleMenus {
         case 4 -> chooseAttendance();
         case 5 -> signInMenu();
         case 6 -> registerMenu();
+        case 7 -> logout();
         case 0 -> {
           return;
         } // Exit application
@@ -137,6 +168,9 @@ public class ConsoleMenus {
     String login = in.nextLine();
     System.out.println("\n--- Enter your password ---");
     String password = in.nextLine();
+    User loggedUser = service.login(login,password);
+    currentUser = loggedUser;
+    System.out.printf("%s %s, you're now logged in.",loggedUser.getFirstName(),loggedUser.getLastName());
 
 
   }

@@ -73,5 +73,48 @@ public class UserDao {
       }
     }
 
+  /**
+   * Authenticate a user.
+   *
+   * @param login the user's login
+   * @param password the user's password
+   * @return the matching {@link User} or {@code null} if credentials are invalid
+   * @throws DaoException if a database access error occurs
+   */
+  public User login(String login, String password) {
+    String sql = "SELECT id, first_name, last_name, login, password, created_at "
+        + "FROM user_ "
+        + "WHERE login = ? AND password = ?";
+
+    try (Connection cn = ConnectionFactory.getConnection();
+        PreparedStatement ps = cn.prepareStatement(sql)) {
+
+      ps.setString(1, login);
+      ps.setString(2, password);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        if (!rs.next()) {
+          return null; // invalid credentials
+        }
+
+        int id = rs.getInt("id");
+        String firstName = rs.getString("first_name");
+        String lastName = rs.getString("last_name");
+        String dbLogin = rs.getString("login");
+        String dbPassword = rs.getString("password");
+
+
+
+
+        return new User(id, firstName, lastName, dbLogin, dbPassword);
+
+
+      }
+
+    } catch (SQLException e) {
+      throw new DaoException("Failed to login user.", e);
+    }
   }
+
+}
 

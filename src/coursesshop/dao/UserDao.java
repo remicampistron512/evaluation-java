@@ -8,9 +8,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 
+/**
+ * Data Access Object (DAO) for {@link User} entities.
+ *
+ * <p>This DAO provides inserts for the {@code user}  table.
+ * </p>
+ */
+
 public class UserDao {
 
-
+  /**
+   * Insert a new user in the database.
+   *
+   * @return a {@link User} object
+   * @throws DaoException if a database access error occurs
+   */
   public User register(String firstName, String lastName, String login, String password) {
 
       LocalDateTime createdAt = LocalDateTime.now();

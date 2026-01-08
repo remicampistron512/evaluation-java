@@ -3,6 +3,7 @@ package coursesshop.ui;
 import coursesshop.business.CourseBuyingService;
 import coursesshop.model.Category;
 import coursesshop.model.Course;
+import coursesshop.model.User;
 import coursesshop.model.enums.AttendanceMode;
 import java.util.List;
 import java.util.Scanner;
@@ -107,15 +108,19 @@ public class ConsoleMenus {
       System.out.println("2) Display courses by category");
       System.out.println("3) Display courses by keyword");
       System.out.println("4) Display courses by attendance");
+      System.out.println("5) Sign in");
+      System.out.println("6) Register");
       System.out.println("0) Exit");
 
-      int choice = readInt("Choose a menu item: " , 0, 4);
+      int choice = readInt("Choose a menu item: " , 0, 6);
 
       switch (choice) {
         case 1 -> listCourses();
         case 2 -> chooseCategory();
         case 3 -> chooseKeyword();
         case 4 -> chooseAttendance();
+        case 5 -> signInMenu();
+        case 6 -> registerMenu();
         case 0 -> {
           return;
         } // Exit application
@@ -123,6 +128,40 @@ public class ConsoleMenus {
           return;
         } // Defensive: unexpected choice
       }
+    }
+  }
+
+  private void signInMenu() {
+  
+    System.out.println("\n--- Enter your login  ---");
+    String login = in.nextLine();
+    System.out.println("\n--- Enter your password ---");
+    String password = in.nextLine();
+
+
+  }
+
+  private void registerMenu() {
+    System.out.println("\n=== REGISTER ===");
+
+    String firstName = readNonEmptyLine("Enter your first name: ");
+    String lastName  = readNonEmptyLine("Enter your last name: ");
+    String login     = readNonEmptyLine("Enter your login: ");
+    String password  = readNonEmptyLine("Enter your password: ");
+
+    User registeredUser =  service.register(firstName, lastName, login, password);
+
+    System.out.printf("Registration of %s %s successful.",registeredUser.getFirstName(), registeredUser.getLastName());
+  }
+
+  private String readNonEmptyLine(String prompt) {
+    while (true) {
+      System.out.print(prompt);
+      String value = in.nextLine().trim();
+      if (!value.isEmpty()) {
+        return value;
+      }
+      System.out.println("Value must not be empty.");
     }
   }
 

@@ -1,0 +1,93 @@
+@startuml
+' https://plantuml.com/class-diagram
+left to right direction
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+package "Domain Model" {
+
+  enum AttendanceMode {
+    ONSITE
+    REMOTE
+    HYBRID
+  }
+
+  class User {
+    +id: int
+    +firstName: String
+    +lastName: String
+    +login: String
+    +password: String
+  }
+
+  class Category {
+    +id: int
+    +name: String
+  }
+
+  class Course {
+    +id: int
+    +name: String
+    +durationDays: int
+    +description: String
+    +price: BigDecimal
+    +mode: AttendanceMode
+  }
+
+  class Customer {
+    +id: int
+    +firstName: String
+    +lastName: String
+    +email: String
+    +address: String
+    +phone: String
+  }
+
+  class Cart {
+    +id: int
+    +createdAt: DateTime
+  }
+
+  class CartItem {
+    +id: int
+    +quantity: int
+    +unitPrice: BigDecimal
+  }
+
+  enum OrderStatus {
+    DRAFT
+    CONFIRMED
+    CANCELLED
+  }
+
+  class Order {
+    +id: int
+    +createdAt: DateTime
+    +status: OrderStatus
+    +totalAmount: BigDecimal
+  }
+
+  class LineOrder {
+    +id: int
+    +quantity: int
+    +unitPrice: BigDecimal
+  }
+}
+
+
+' ----------------- Associations (Domain) -----------------
+Category "1" <-- "0..*" Course
+Cart "1" *-- "0..*" CartItem
+CartItem "1" --> "0..*" Course
+LineOrder "1" --> "0..*" Course
+
+
+User "1" --> "0..*" Order
+Order "1" --> "1" Customer
+Order "1" *-- "0..*" LineOrder
+' Optional: cart can be anonymous (guest) or attached to a user
+User "0..1" <-- "0..1" Cart
+
+
+
+@enduml

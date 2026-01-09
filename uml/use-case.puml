@@ -1,0 +1,27 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Guest\n(not logged in)" as Guest
+actor "User\n(logged in)" as User
+
+rectangle "Courses Shop" {
+
+  (Display Courses) as UC_Browse
+  (Manage cart add/remove/view) as UC_Cart
+  (Sign up) as UC_SignUp
+  (Log in) as UC_Login
+  (Checkout / Place order) as UC_Checkout
+}
+
+Guest -- UC_Browse
+
+Guest -- UC_SignUp
+Guest -- UC_Login
+
+
+User -- UC_Browse
+User -- UC_Cart
+User -- UC_Checkout
+
+@enduml

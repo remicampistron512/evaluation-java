@@ -1,0 +1,47 @@
+@startuml
+title Course purchase
+
+actor User
+boundary "ConsoleMenus UI" as UI
+control "CourseBuyingService" as CBS
+database "DAOS/DB" as DAOS
+
+
+User -> UI : Select course + "Add to cart"
+activate UI
+activate User
+UI -> CBS : addToCart(courseId, qty=1)
+activate CBS
+CBS -> DAOS : findById(courseId)
+activate DAOS
+DAOS --> CBS : course(price)
+CBS --> UI : cartUpdated
+
+User -> UI : Checkout
+UI -> CBS : checkout(login?, password?, customerDetails)
+alt User not authenticated
+  CBS --> UI : requestLogin
+  User -> UI : Provide login + password
+
+  UI -> CBS : login(login, password)
+  CBS -> DAOS : findByLogin(login)
+  DAOS --> CBS : user + password
+  CBS --> UI : authOK(userId)
+end
+
+UI -> CBS : checkout(customerDetails)
+
+CBS -> DAOS : create(customerDetails)
+DAOS --> CBS : customerId
+CBS -> DAOS : createOrder(userId, customerId)
+DAOS --> CBS : orderId
+CBS -> DAOS : addOrderLines(orderId, cartItems)
+DAOS --> CBS : linesSaved
+deactivate DAOS
+CBS --> UI : orderConfirmed(orderId)
+deactivate UI
+deactivate CBS
+
+UI --> User : Show confirmation(orderId)
+deactivate User
+@enduml

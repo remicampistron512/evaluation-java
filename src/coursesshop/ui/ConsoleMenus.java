@@ -1,9 +1,12 @@
 package coursesshop.ui;
 
 import coursesshop.business.CourseBuyingService;
+import coursesshop.model.Cart;
 import coursesshop.model.Category;
 import coursesshop.model.Course;
+import coursesshop.model.User;
 import coursesshop.model.enums.AttendanceMode;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,6 +35,16 @@ public class ConsoleMenus {
   private final CourseBuyingService service;
 
   /**
+   * Session state
+   */
+  private User currentUser = null;
+
+  /**
+   * Cart state
+   */
+
+  private Cart currentCart = null;
+  /**
    * Builds a new console menu controller.
    *
    * @param service the business service used by the UI (must not be {@code null})
@@ -46,9 +59,24 @@ public class ConsoleMenus {
    * <p>This method blocks until the user exits from the main menu.
    * </p>
    */
-  public void run() {
+  public void run() throws SQLException {
     mainMenu(); // blocks until user exits
     System.out.println("Goodbye.");
+  }
+
+  /**
+   * track if a user is connected
+   * @return the state of currentUser
+   */
+  private boolean isLoggedIn() {
+    return currentUser != null;
+  }
+
+  /**
+   * log out a user
+   */
+  private void logout() {
+    currentUser = null;
   }
 
   /**
@@ -100,22 +128,38 @@ public class ConsoleMenus {
    * <p>Displays the available user actions and dispatches to the corresponding handlers.
    * </p>
    */
-  private void mainMenu() {
+  private void mainMenu() throws SQLException {
     while (true) {
-      System.out.println("\n=== MAIN MENU ===");
-      System.out.println("1) Display courses");
-      System.out.println("2) Display courses by category");
-      System.out.println("3) Display courses by keyword");
-      System.out.println("4) Display courses by attendance");
-      System.out.println("0) Exit");
+      if(isLoggedIn()) {
+        System.out.printf("%n=== WELCOME %s %s ===%n",currentUser.getFirstName(),currentUser.getLastName());
+        System.out.println("1) Display and buy courses");
+        System.out.println("2) Display and buy courses by category");
+        System.out.println("3) Display and buy courses by keyword");
+        System.out.println("4) Display and buy courses by attendance");
+        System.out.println("7) Sign Out");
+        System.out.println("8)  ");
+        System.out.println("0) Exit");
+      } else {
+        System.out.println("\n=== MAIN MENU ===");
+        System.out.println("1) Display courses");
+        System.out.println("2) Display courses by category");
+        System.out.println("3) Display courses by keyword");
+        System.out.println("4) Display courses by attendance");
+        System.out.println("5) Sign in");
+        System.out.println("6) Register");
+        System.out.println("0) Exit");
+      }
 
-      int choice = readInt("Choose a menu item: " , 0, 4);
+      int choice = readInt("Choose a menu item: " , 0, 7);
 
       switch (choice) {
         case 1 -> listCourses();
         case 2 -> chooseCategory();
         case 3 -> chooseKeyword();
         case 4 -> chooseAttendance();
+        case 5 -> signInMenu();
+        case 6 -> registerMenu();
+        case 7 -> logout();
         case 0 -> {
           return;
         } // Exit application
@@ -123,6 +167,43 @@ public class ConsoleMenus {
           return;
         } // Defensive: unexpected choice
       }
+    }
+  }
+
+  private void signInMenu() {
+  
+    System.out.println("\n--- Enter your login  ---");
+    String login = in.nextLine();
+    System.out.println("\n--- Enter your password ---");
+    String password = in.nextLine();
+    User loggedUser = service.login(login,password);
+    currentUser = loggedUser;
+    System.out.printf("%s %s, you're now logged in.",loggedUser.getFirstName(),loggedUser.getLastName());
+
+
+  }
+
+  private void registerMenu() {
+    System.out.println("\n=== REGISTER ===");
+
+    String firstName = readNonEmptyLine("Enter your first name: ");
+    String lastName  = readNonEmptyLine("Enter your last name: ");
+    String login     = readNonEmptyLine("Enter your login: ");
+    String password  = readNonEmptyLine("Enter your password: ");
+
+    User registeredUser =  service.register(firstName, lastName, login, password);
+
+    System.out.printf("Registration of %s %s successful.",registeredUser.getFirstName(), registeredUser.getLastName());
+  }
+
+  private String readNonEmptyLine(String prompt) {
+    while (true) {
+      System.out.print(prompt);
+      String value = in.nextLine().trim();
+      if (!value.isEmpty()) {
+        return value;
+      }
+      System.out.println("Value must not be empty.");
     }
   }
 
@@ -258,7 +339,30 @@ public class ConsoleMenus {
   /**
    * Displays all courses.
    */
-  private void listCourses() {
+  private void listCourses() throws SQLException {
+    List<Course> coursesList = service.listCourses();
     printCourses("Courses", service.listCourses());
+    if(isLoggedIn()){
+      int choice = readInt("Choose a course to buy",1,coursesList.size());
+      if(isCartAvailable()){
+        addTocart(choice);
+      } else {
+        createCart();
+        addTocart(choice);
+      }
+    }
+  }
+
+  private void createCart() throws SQLException {
+    Cart newCart = service.createCart(currentUser.getId());
+    currentCart = newCart;
+  }
+
+  private boolean isCartAvailable() {
+    return currentCart != null;
+  }
+
+  private void addTocart(int choice) {
+    service.addToCart(choice);
   }
 }

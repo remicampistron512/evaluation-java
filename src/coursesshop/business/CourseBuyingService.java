@@ -1,11 +1,16 @@
 package coursesshop.business;
 
 import coursesshop.dao.AttendanceModeDao;
+import coursesshop.dao.CartDao;
 import coursesshop.dao.CategoryDao;
 import coursesshop.dao.CourseDao;
+import coursesshop.dao.UserDao;
+import coursesshop.model.Cart;
 import coursesshop.model.Category;
 import coursesshop.model.Course;
+import coursesshop.model.User;
 import coursesshop.model.enums.AttendanceMode;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -44,7 +49,7 @@ public class CourseBuyingService {
    *
    * @param categoryId the category identifier (PK of {@code category.id})
    * @return a list of {@link Course} objects in the selected category (possibly empty, never
-   *{@code null})
+   * {@code null})
    */
   public List<Course> listCoursesByCategory(int categoryId) {
     // DAO call: fetch courses by category id
@@ -90,5 +95,31 @@ public class CourseBuyingService {
     // DAO call: fetch courses by attendance mode
     CourseDao courseDao = new CourseDao();
     return courseDao.findByAttendance(attendanceMode);
+  }
+
+  public User register(String firstName, String lastName, String login, String password) {
+    UserDao userdao = new UserDao();
+    return userdao.register(firstName, lastName, login, password);
+  }
+
+  /**
+   * Login a User
+   * @param login the user login
+   * @param password the user password
+   * @return a {@link User} object
+   */
+  public User login(String login, String password){
+    UserDao userdao = new UserDao();
+    return userdao.login(login, password);
+  }
+
+  public Cart addToCart(int choice) {
+    CartDao cartDao = new CartDao();
+    return cartDao.addToCart();
+  }
+
+  public Cart createCart(int userId) throws SQLException {
+    CartDao cartDao = new CartDao();
+    return cartDao.createCart(userId);
   }
 }

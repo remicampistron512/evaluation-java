@@ -2,6 +2,9 @@ package coursesshop.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Cart {
   private int id;
@@ -13,6 +16,7 @@ public class Cart {
   private LocalDateTime updatedAt;
   private int quantity;
   private BigDecimal unitPrice;
+  private final List<CartItem> items = new ArrayList<>();
 
   public Cart(){
 
@@ -77,5 +81,19 @@ public class Cart {
 
   public void setUnitPrice(BigDecimal unitPrice) {
     this.unitPrice = unitPrice;
+  }
+
+  public List<CartItem> getCartItems() {
+    return Collections.unmodifiableList(items);
+  }
+
+
+  public void addItem(CartItem item) {
+    if (item == null) throw new IllegalArgumentException("item cannot be null");
+    items.add(item);
+  }
+
+  public void clearItems() {
+    items.clear();
   }
 }

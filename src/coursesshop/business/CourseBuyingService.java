@@ -33,6 +33,11 @@ public class CourseBuyingService {
     return courseDao.findAll();
   }
 
+
+  public Course findCourseById(int courseId){
+    CourseDao courseDao = new CourseDao();
+    return courseDao.findById(courseId);
+  }
   /**
    * Retrieves all available course categories.
    *
@@ -113,13 +118,20 @@ public class CourseBuyingService {
     return userdao.login(login, password);
   }
 
-  public Cart addToCart(int choice) {
-    CartDao cartDao = new CartDao();
-    return cartDao.addToCart();
-  }
+
 
   public Cart createCart(int userId) throws SQLException {
     CartDao cartDao = new CartDao();
     return cartDao.createCart(userId);
+  }
+
+  public Cart addToCart(int choice, int id, int i) throws SQLException {
+    CartDao cartDao = new CartDao();
+    return cartDao.addToCart(choice,id,i);
+  }
+
+  public Cart getCartByUserId(int id) {
+    CartDao cartDao = new CartDao();
+    return cartDao.getCartByUserId(id);
   }
 }

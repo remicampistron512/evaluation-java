@@ -131,13 +131,14 @@ public class ConsoleMenus {
   private void mainMenu() throws SQLException {
     while (true) {
       if(isLoggedIn()) {
+        doesCartExists();
         System.out.printf("%n=== WELCOME %s %s ===%n",currentUser.getFirstName(),currentUser.getLastName());
         System.out.println("1) Display and buy courses");
         System.out.println("2) Display and buy courses by category");
         System.out.println("3) Display and buy courses by keyword");
         System.out.println("4) Display and buy courses by attendance");
         System.out.println("7) Sign Out");
-        System.out.println("8)  ");
+        System.out.println("8) View cart ");
         System.out.println("0) Exit");
       } else {
         System.out.println("\n=== MAIN MENU ===");
@@ -150,7 +151,7 @@ public class ConsoleMenus {
         System.out.println("0) Exit");
       }
 
-      int choice = readInt("Choose a menu item: " , 0, 7);
+      int choice = readInt("Choose a menu item: " , 0, 8);
 
       switch (choice) {
         case 1 -> listCourses();
@@ -160,6 +161,7 @@ public class ConsoleMenus {
         case 5 -> signInMenu();
         case 6 -> registerMenu();
         case 7 -> logout();
+        case 8 -> viewCart();
         case 0 -> {
           return;
         } // Exit application
@@ -167,6 +169,18 @@ public class ConsoleMenus {
           return;
         } // Defensive: unexpected choice
       }
+    }
+  }
+
+  private void doesCartExists() {
+    if(currentCart == null){
+      currentCart = service.getCartByUserId(currentUser.getId());
+    }
+  }
+
+  private void viewCart() {
+    if(isCartAvailable()){
+      currentCart.getCartItems();
     }
   }
 
@@ -345,24 +359,27 @@ public class ConsoleMenus {
     if(isLoggedIn()){
       int choice = readInt("Choose a course to buy",1,coursesList.size());
       if(isCartAvailable()){
-        addTocart(choice);
+        addToCart(choice);
       } else {
         createCart();
-        addTocart(choice);
+        addToCart(choice);
       }
     }
   }
 
   private void createCart() throws SQLException {
-    Cart newCart = service.createCart(currentUser.getId());
-    currentCart = newCart;
+    currentCart = service.createCart(currentUser.getId());
+
   }
 
   private boolean isCartAvailable() {
     return currentCart != null;
   }
 
-  private void addTocart(int choice) {
-    service.addToCart(choice);
+  private void addToCart(int choice) throws SQLException {
+    Course selectedCourse = service.findCourseById(choice);
+    currentCart = service.addToCart(currentCart.getId(),choice,1);
+
+    System.out.printf("%s has been added to the cart.",selectedCourse.getName());
   }
 }

@@ -39,14 +39,14 @@ public class CourseDao {
    */
   private Course mapCourse(ResultSet rs) throws SQLException {
     // Read scalar columns
-    int id = rs.getInt("id");
-    String name = rs.getString("name");
-    String description = rs.getString("description");
-    int durationDays = rs.getInt("duration_days");
-    BigDecimal price = rs.getBigDecimal("price");
+    int id = rs.getInt("cou_id");
+    String name = rs.getString("cou_name");
+    String description = rs.getString("cou_description");
+    int durationDays = rs.getInt("cou_duration_days");
+    BigDecimal price = rs.getBigDecimal("cou_price");
 
     // Convert attendance mode code into enum (expects "ONSITE" or "REMOTE")
-    String code = rs.getString("attendance_mode_code");
+    String code = rs.getString("cou_attendance_mode_code");
     AttendanceMode mode = AttendanceMode.valueOf(code);
 
     // Build and return the domain object
@@ -101,14 +101,14 @@ public class CourseDao {
    */
   public List<Course> findAll() {
     String sql = """
-        SELECT c.id,
-               c.name,
-               c.description,
-               c.duration_days,
-               c.price,
-               c.attendance_mode_code
-        FROM course c
-        ORDER BY c.name
+        SELECT cou_id,
+               cou_name,
+               cou_description,
+               cou_duration_days,
+               cou_price,
+               cou_attendance_mode_code
+        FROM course
+        ORDER BY cou_name
         """;
 
     return queryCourses(sql, null);
@@ -123,12 +123,12 @@ public class CourseDao {
    */
   public List<Course> findByCategory(int categoryId) {
     String sql = """
-        SELECT c.id,
-               c.name,
-               c.description,
-               c.duration_days,
-               c.price,
-               c.attendance_mode_code
+        SELECT cou_id,
+               cou_name,
+               cou_description,
+               cou_duration_days,
+               cou_price,
+               cou_attendance_mode_code
         FROM course c
         JOIN course_category cc ON cc.course_id = c.id
         JOIN category cat ON cat.id = cc.category_id
@@ -158,16 +158,16 @@ public class CourseDao {
    */
   public List<Course> findByKeyword(String keyword) {
     String sql = """
-        SELECT c.id,
-               c.name,
-               c.description,
-               c.duration_days,
-               c.price,
-               c.attendance_mode_code
-        FROM course c
-        WHERE c.name LIKE ?
-           OR c.description LIKE ?
-        ORDER BY c.name
+        SELECT cou_id,
+               cou_name,
+               cou_description,
+               cou_duration_days,
+               cou_price,
+               cou_attendance_mode_code
+        FROM course
+        WHERE cou_name LIKE ?
+           OR cou_description LIKE ?
+        ORDER BY cou_name
         """;
 
     String pattern = "%" + keyword + "%";
@@ -193,15 +193,15 @@ public class CourseDao {
    */
   public List<Course> findByAttendance(AttendanceMode mode) {
     String sql = """
-        SELECT id,
-               name,
-               description,
-               duration_days,
-               price,
-               attendance_mode_code
+        SELECT cou_id,
+               cou_name,
+               cou_description,
+               cou_duration_days,
+               cou_price,
+               cou_attendance_mode_code
         FROM course
-        WHERE attendance_mode_code = ?
-        ORDER BY name
+        WHERE cou_attendance_mode_code = ?
+        ORDER BY cou_name
         """;
 
     // attendance_mode_code is stored as a String equal to the enum name ("ONSITE"/"REMOTE")

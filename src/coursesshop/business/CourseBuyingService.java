@@ -1,13 +1,16 @@
 package coursesshop.business;
 
 import coursesshop.dao.AttendanceModeDao;
+import coursesshop.dao.CartDao;
 import coursesshop.dao.CategoryDao;
 import coursesshop.dao.CourseDao;
 import coursesshop.dao.UserDao;
+import coursesshop.model.Cart;
 import coursesshop.model.Category;
 import coursesshop.model.Course;
 import coursesshop.model.User;
 import coursesshop.model.enums.AttendanceMode;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -108,5 +111,15 @@ public class CourseBuyingService {
   public User login(String login, String password){
     UserDao userdao = new UserDao();
     return userdao.login(login, password);
+  }
+
+  public Cart addToCart(int choice) {
+    CartDao cartDao = new CartDao();
+    return cartDao.addToCart();
+  }
+
+  public Cart createCart(int userId) throws SQLException {
+    CartDao cartDao = new CartDao();
+    return cartDao.createCart(userId);
   }
 }

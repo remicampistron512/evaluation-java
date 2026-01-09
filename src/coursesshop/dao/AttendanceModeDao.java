@@ -32,7 +32,7 @@ public class AttendanceModeDao {
    */
   public List<AttendanceMode> listAttendanceModeCodes() {
     // Select only the "code" column; it must correspond to enum names.
-    String sql = "SELECT code FROM attendance_mode ORDER BY code";
+    String sql = "SELECT code FROM attendance_mode ORDER BY am_code";
 
     // Container for the resulting enum values.
     List<AttendanceMode> modes = new ArrayList<>();
@@ -44,7 +44,7 @@ public class AttendanceModeDao {
 
       // Iterate through each row and convert the DB code into an AttendanceMode enum.
       while (rs.next()) {
-        String code = rs.getString("code");
+        String code = rs.getString("am_code");
         modes.add(AttendanceMode.valueOf(code)); // expected: "ONSITE" / "REMOTE"
       }
 

@@ -27,7 +27,7 @@ public class UserDao {
 
       LocalDateTime createdAt = LocalDateTime.now();
       // SQL statement to insert the base "user" record
-      String sqlUser = "INSERT INTO user_(first_name, last_name,login,password,created_at) "
+      String sqlUser = "INSERT INTO user_(use_first_name, use_last_name,use_login,use_password,use_created_at) "
           + "VALUES (?, ?, ?, ?, ?)";
 
       // Acquire a DB connection; try-with-resources ensures it is closed automatically
@@ -82,9 +82,9 @@ public class UserDao {
    * @throws DaoException if a database access error occurs
    */
   public User login(String login, String password) {
-    String sql = "SELECT id, first_name, last_name, login, password, created_at "
+    String sql = "SELECT use_id, use_first_name, use_last_name, use_login, use_password, use_created_at "
         + "FROM user_ "
-        + "WHERE login = ? AND password = ?";
+        + "WHERE use_login = ? AND use_password = ?";
 
     try (Connection cn = ConnectionFactory.getConnection();
         PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -97,11 +97,11 @@ public class UserDao {
           return null; // invalid credentials
         }
 
-        int id = rs.getInt("id");
-        String firstName = rs.getString("first_name");
-        String lastName = rs.getString("last_name");
-        String dbLogin = rs.getString("login");
-        String dbPassword = rs.getString("password");
+        int id = rs.getInt("use_id");
+        String firstName = rs.getString("use_first_name");
+        String lastName = rs.getString("use_last_name");
+        String dbLogin = rs.getString("use_login");
+        String dbPassword = rs.getString("use_password");
 
 
 

@@ -1,10 +1,12 @@
 package coursesshop.ui;
 
 import coursesshop.business.CourseBuyingService;
+import coursesshop.model.Cart;
 import coursesshop.model.Category;
 import coursesshop.model.Course;
 import coursesshop.model.User;
 import coursesshop.model.enums.AttendanceMode;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -38,6 +40,11 @@ public class ConsoleMenus {
   private User currentUser = null;
 
   /**
+   * Cart state
+   */
+
+  private Cart currentCart = null;
+  /**
    * Builds a new console menu controller.
    *
    * @param service the business service used by the UI (must not be {@code null})
@@ -52,7 +59,7 @@ public class ConsoleMenus {
    * <p>This method blocks until the user exits from the main menu.
    * </p>
    */
-  public void run() {
+  public void run() throws SQLException {
     mainMenu(); // blocks until user exits
     System.out.println("Goodbye.");
   }
@@ -121,7 +128,7 @@ public class ConsoleMenus {
    * <p>Displays the available user actions and dispatches to the corresponding handlers.
    * </p>
    */
-  private void mainMenu() {
+  private void mainMenu() throws SQLException {
     while (true) {
       if(isLoggedIn()) {
         System.out.printf("%n=== WELCOME %s %s ===%n",currentUser.getFirstName(),currentUser.getLastName());
@@ -130,6 +137,7 @@ public class ConsoleMenus {
         System.out.println("3) Display and buy courses by keyword");
         System.out.println("4) Display and buy courses by attendance");
         System.out.println("7) Sign Out");
+        System.out.println("8)  ");
         System.out.println("0) Exit");
       } else {
         System.out.println("\n=== MAIN MENU ===");
@@ -331,7 +339,30 @@ public class ConsoleMenus {
   /**
    * Displays all courses.
    */
-  private void listCourses() {
+  private void listCourses() throws SQLException {
+    List<Course> coursesList = service.listCourses();
     printCourses("Courses", service.listCourses());
+    if(isLoggedIn()){
+      int choice = readInt("Choose a course to buy",1,coursesList.size());
+      if(isCartAvailable()){
+        addTocart(choice);
+      } else {
+        createCart();
+        addTocart(choice);
+      }
+    }
+  }
+
+  private void createCart() throws SQLException {
+    Cart newCart = service.createCart(currentUser.getId());
+    currentCart = newCart;
+  }
+
+  private boolean isCartAvailable() {
+    return currentCart != null;
+  }
+
+  private void addTocart(int choice) {
+    service.addToCart(choice);
   }
 }

@@ -25,9 +25,9 @@ public class CategoryDao {
   public List<Category> findAll() {
     // Query all categories; keep output stable by ordering by primary key.
     String sql = """
-            SELECT c.id, c.name
-            FROM category c
-            ORDER BY c.id
+            SELECT cat_id, cat_name
+            FROM category
+            ORDER BY cat_id
             """;
 
     // Container for the resulting categories.
@@ -40,8 +40,8 @@ public class CategoryDao {
 
       // Iterate through rows and map each row to a Category domain object.
       while (rs.next()) {
-        int id = rs.getInt("id");
-        String name = rs.getString("name");
+        int id = rs.getInt("cat_id");
+        String name = rs.getString("cat_name");
 
         // Build the domain object from the current row.
         categories.add(new Category(id, name));

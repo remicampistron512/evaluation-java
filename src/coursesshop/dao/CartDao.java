@@ -198,6 +198,64 @@ public class CartDao {
       }
     }
 
+  public Cart getCartByUserId(int userId) {
+    String cartSql = """
+        SELECT crt_id, use_id, crt_created_at, crt_updated_at
+        FROM cart
+        WHERE use_id = ?
+        """;
 
+    String itemsSql = """
+        SELECT ci.cit_id, ci.cou_id, ci.cit_quantity, ci.cit_unit_price
+        FROM cart_item ci
+        JOIN cart_cart_item cci ON cci.cit_id = ci.cit_id
+        WHERE cci.crt_id = ?
+        ORDER BY ci.cit_id
+        """;
+
+    try (Connection cn = ConnectionFactory.getConnection();
+        PreparedStatement cartPs = cn.prepareStatement(cartSql)) {
+
+      cartPs.setInt(1, userId);
+
+      try (ResultSet rs = cartPs.executeQuery()) {
+        if (!rs.next()) {
+          return null; // no cart for this user
+        }
+
+        int cartId = rs.getInt("crt_id");
+
+        Timestamp tsCreated = rs.getTimestamp("crt_created_at");
+        Timestamp tsUpdated = rs.getTimestamp("crt_updated_at");
+
+        LocalDateTime createdAt = tsCreated != null ? tsCreated.toLocalDateTime() : null;
+        LocalDateTime updatedAt = tsUpdated != null ? tsUpdated.toLocalDateTime() : null;
+
+        Cart cart = new Cart(cartId, userId, createdAt, updatedAt);
+
+        // Load items
+        try (PreparedStatement itemsPs = cn.prepareStatement(itemsSql)) {
+          itemsPs.setInt(1, cartId);
+
+          try (ResultSet itemsRs = itemsPs.executeQuery()) {
+            while (itemsRs.next()) {
+              CartItem item = new CartItem(
+                  itemsRs.getInt("cit_id"),
+                  itemsRs.getInt("cou_id"),
+                  itemsRs.getInt("cit_quantity"),
+                  itemsRs.getBigDecimal("cit_unit_price")
+              );
+              cart.addItem(item);
+            }
+          }
+        }
+
+        return cart;
+      }
+
+    } catch (SQLException e) {
+      throw new DaoException("Failed to get cart by user id: " + userId, e);
+    }
+  }
 }
 

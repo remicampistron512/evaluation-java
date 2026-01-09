@@ -213,4 +213,40 @@ public class CourseDao {
       }
     });
   }
+  /**
+   * Returns a course by its primary key.
+   *
+   * @param courseId the course identifier (PK of {@code course.cou_id})
+   * @return the matching {@link Course}, or {@code null} if not found
+   * @throws DaoException if a JDBC error occurs
+   */
+  public Course findById(int courseId) {
+    String sql = """
+      SELECT cou_id,
+             cou_name,
+             cou_description,
+             cou_duration_days,
+             cou_price,
+             cou_attendance_mode_code
+      FROM course
+      WHERE cou_id = ?
+      """;
+
+    try (Connection cn = ConnectionFactory.getConnection();
+        PreparedStatement ps = cn.prepareStatement(sql)) {
+
+      ps.setInt(1, courseId);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return mapCourse(rs);
+        }
+        return null;
+      }
+
+    } catch (SQLException e) {
+      throw new DaoException("Failed to find course by id: " + courseId, e);
+    }
+  }
+
 }
